@@ -64,15 +64,18 @@ def index():
                 flash(f"✅ Kickstart 파일이 {ks_path} 에 성공적으로 생성되었습니다.", 'success')
 
             elif action == 'download_iso':
-                # AlmaLinux 9.4를 예시로 사용 (RHEL 정식 ISO는 구독 필요)
-                iso_url = "https://repo.almalinux.org/almalinux/9.4/isos/x86_64/AlmaLinux-9.4-x86_64-dvd.iso"
-                iso_name = os.path.basename(iso_url)
-                download_path = f"/tmp/{iso_name}"
+                # 사용자가 제공한 RHEL 9.6 다운로드 URL로 변경
+                iso_url = "https://access.cdn.redhat.com/content/origin/files/sha256/fe/febcc1359fd68faceff82d7eed8d21016e022a17e9c74e0e3f9dc3a78816b2bb/rhel-9.6-x86_64-dvd.iso?user=396cc481f3d7f988349fd7e09e138434&_auth_=1752744114_f502b1b7a2f8de8644b2547bf860f279"
+                
+                # 다운로드될 파일 이름 지정 (URL이 복잡하므로 고정된 이름 사용)
+                iso_filename = "rhel-9.6-x86_64-dvd.iso"
+                download_path = f"/tmp/{iso_filename}"
                 mount_path = "/var/www/html/rhel9.6"
 
                 flash(f"ISO 다운로드를 시작합니다... (대상: {mount_path})", 'info')
                 
                 # wget과 mount 실행
+                # URL에 특수문자(&,?)가 있으므로 반드시 따옴표로 감싸줍니다.
                 subprocess.run(['sudo', 'wget', '-O', download_path, iso_url], check=True)
                 subprocess.run(['sudo', 'mount', '-o', 'loop', download_path, mount_path], check=True)
                 
@@ -108,5 +111,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    # 경고: 운영 환경에서는 debug=True 옵션을 사용하지 마세요.
     app.run(host='0.0.0.0', port=5000, debug=True)
