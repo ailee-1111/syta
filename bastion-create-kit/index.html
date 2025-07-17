@@ -30,47 +30,74 @@
           {% endif %}
         {% endwith %}
 
+        <!-- 0단계 -->
+        <div class="card">
+            <div class="card-header">0단계: 다운로드 링크 준비</div>
+            <div class="card-body">
+                <p class="card-text">
+                    아래 버튼을 눌러 Red Hat 다운로드 페이지를 새 탭에서 엽니다. 로그인 후,
+                    <b>"Red Hat Enterprise Linux 9.6 Binary DVD"</b>의 다운로드 링크 주소를 복사하세요.
+                </p>
+                <a href="https://access.redhat.com/downloads/content/rhel" target="_blank" class="btn btn-info">Red Hat 다운로드 페이지 열기</a>
+            </div>
+        </div>
+
+        <!-- 1단계 Form -->
         <form method="post">
             <div class="card">
-                <div class="card-header">1단계: RHEL 9.6 이미지 다운로드 (최초 1회)</div>
+                <div class="card-header">1단계: RHEL 9.6 이미지 다운로드</div>
                 <div class="card-body">
-                    <p class="card-text">설치에 사용할 ISO 이미지를 다운로드하고 웹 서버 경로에 마운트합니다.</p>
-                    <button type="submit" name="action" value="download_iso" class="btn btn-primary">RHEL 9.6 이미지 다운로드</button>
+                    <div class="mb-3">
+                        <label for="iso_url_from_user" class="form-label">복사한 다운로드 링크 붙여넣기</label>
+                        <input type="url" class="form-control" id="iso_url_from_user" name="iso_url_from_user" placeholder="https://access.cdn.redhat.com/..." required>
+                        <div class="form-text">0단계에서 복사한 임시 다운로드 링크를 여기에 붙여넣으세요.</div>
+                    </div>
+                    <button type="submit" name="action" value="download_iso" class="btn btn-primary">붙여넣은 링크로 이미지 다운로드</button>
                 </div>
             </div>
-
+        </form>
+        
+        <!-- 2단계 Form -->
+        <form method="post">
             <div class="card">
                 <div class="card-header">2단계: Kickstart 파일 생성</div>
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="root_password" class="form-label">Root 비밀번호</label>
-                        <input type="password" class="form-control" id="root_password" name="root_password" value="Redhat123!@#" required>
+                        <input type="password" class="form-control" id="root_password" name="root_password" placeholder="Redhat123!@#" required>
                     </div>
                     <div class="mb-3">
                         <label for="hostname" class="form-label">VM 호스트명</label>
-                        <input type="text" class="form-control" id="hostname" name="hostname" value="bastion.example.com" required>
+                        <input type="text" class="form-control" id="hostname" name="hostname" placeholder="bastion.example.com" required>
                     </div>
                     <div class="mb-3">
                         <label for="ip_address" class="form-label">VM IP 주소</label>
-                        <input type="text" class="form-control" id="ip_address" name="ip_address" value="192.168.0.177" required>
+                        <input type="text" class="form-control" id="ip_address" name="ip_address" placeholder="192.168.0.177" required>
                     </div>
                     <div class="mb-3">
                         <label for="subnet" class="form-label">서브넷 마스크</label>
-                        <input type="text" class="form-control" id="subnet" name="subnet" value="255.255.255.0" required>
+                        <input type="text" class="form-control" id="subnet" name="subnet" placeholder="255.255.255.0" required>
                     </div>
                     <div class="mb-3">
-                        <label for="http_server_ip" class="form-label">호스트(HTTP) 서버 IP</label>
-                        <input type="text" class="form-control" id="http_server_ip" name="http_server_ip" placeholder="예: 192.168.0.201" required>
-                        <div class="form-text">현재 RHEL 9 호스트의 IP 주소를 입력하세요.</div>
+                        <label for="http_server_ip_step2" class="form-label">호스트(HTTP) 서버 IP</label>
+                        <input type="text" class="form-control" id="http_server_ip_step2" name="http_server_ip" placeholder="예: 192.168.0.201" required>
+                        <div class="form-text">Kickstart 설치에 사용할 호스트의 IP 주소입니다.</div>
                     </div>
                     <button type="submit" name="action" value="generate_kickstart" class="btn btn-success">Kickstart 파일 생성</button>
                 </div>
             </div>
+        </form>
 
+        <!-- 3단계 Form -->
+        <form method="post">
             <div class="card">
                 <div class="card-header">3단계: Bastion VM 생성</div>
                 <div class="card-body">
-                    <p class="card-text">위에서 생성된 Kickstart 파일을 사용하여 Bastion VM 생성을 시작합니다.</p>
+                    <div class="mb-3">
+                        <label for="http_server_ip_step3" class="form-label">호스트(HTTP) 서버 IP</label>
+                        <input type="text" class="form-control" id="http_server_ip_step3" name="http_server_ip" placeholder="Kickstart 파일 생성 시 사용한 IP와 동일" required>
+                        <div class="form-text">VM 생성에 사용할 호스트의 IP 주소를 입력하세요.</div>
+                    </div>
                     <button type="submit" name="action" value="create_vm" class="btn btn-danger">Bastion VM 생성 시작</button>
                 </div>
             </div>
