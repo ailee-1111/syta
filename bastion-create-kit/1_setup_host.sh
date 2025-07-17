@@ -21,12 +21,12 @@ echo "⚙️ libvirt 및 httpd 서비스를 활성화하고 시작합니다..."
 sudo systemctl enable --now libvirtd
 sudo systemctl enable --now httpd
 
-# 4. 방화벽 설정
-echo "🔥 방화벽에 http(80), ssh(22), webapp(5000) 포트를 영구적으로 추가합니다..."
-sudo firewall-cmd --permanent --add-service=http
-sudo firewall-cmd --permanent --add-service=ssh
-sudo firewall-cmd --permanent --add-port=5000/tcp # Flask App Port
-sudo firewall-cmd --reload
+## 4. 방화벽 설정
+#echo "🔥 방화벽에 http(80), ssh(22), webapp(5000) 포트를 영구적으로 추가합니다..."
+#sudo firewall-cmd --permanent --add-service=http
+#sudo firewall-cmd --permanent --add-service=ssh
+#sudo firewall-cmd --permanent --add-port=5000/tcp # Flask App Port
+#sudo firewall-cmd --reload
 
 # 5. Bastion 앱 및 Kickstart 관련 디렉토리 생성
 echo "📁 웹 서버 및 애플리케이션 관련 디렉토리를 생성합니다..."
