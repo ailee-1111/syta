@@ -6,7 +6,7 @@ echo "🚚 2. 웹 애플리케이션 파일을 배포합니다..."
 echo "========================================================"
 
 APP_SOURCE="./app.py"
-TEMPLATE_SOURCE="./templates/index.html"
+TEMPLATE_SOURCE="./index.html"
 
 APP_DEST="/var/www/html/bastion/app.py"
 TEMPLATE_DEST="/var/www/html/bastion/templates/index.html"
