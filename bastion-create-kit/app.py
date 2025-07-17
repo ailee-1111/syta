@@ -24,7 +24,7 @@ autopart --type=lvm
 graphical
 
 %packages
-@^server-with-gui
+@^graphical-server-environment
 haproxy
 bind
 bind-utils
