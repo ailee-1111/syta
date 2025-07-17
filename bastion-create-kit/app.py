@@ -92,7 +92,7 @@ def index():
                     '--ram', '16384',
                     '--vcpus', '8',
                     '--disk', 'path=/var/lib/libvirt/images/rhel96-bastion.qcow2,size=50',
-                    '--os-variant', 'rhel9.6',
+                    '--os-variant', 'rhel9.4',
                     '--network', 'bridge=virbr0',
                     '--graphics', 'vnc,listen=0.0.0.0',
                     '--location', location_url,
