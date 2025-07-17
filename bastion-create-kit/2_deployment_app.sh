@@ -23,11 +23,10 @@ if [ ! -f "$TEMPLATE_SOURCE" ]; then
 fi
 
 # 2. 파일 복사
-echo "� 'app.py' -> '${APP_DEST}'"
+echo " 'app.py' -> '${APP_DEST}'"
 sudo cp "$APP_SOURCE" "$APP_DEST"
 
-echo "📄 'templates/index.html' -> '${TEMPLATE_DEST}'"
+echo " 'templates/index.html' -> '${TEMPLATE_DEST}'"
 sudo cp "$TEMPLATE_SOURCE" "$TEMPLATE_DEST"
 
 echo "✅ 파일 배포가 완료되었습니다. 다음으로 '3_register_service.sh'를 실행하세요."
-�
