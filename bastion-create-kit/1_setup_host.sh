@@ -18,6 +18,19 @@ sudo pip3 install Flask
 
 # 3. 서비스 활성화 (libvirt, httpd)
 echo "⚙️ libvirt 및 httpd 서비스를 활성화하고 시작합니다..."
+
+
+# --- httpd 포트를 8080으로 변경 ---
+echo "⚙️ httpd 포트를 80에서 8080으로 변경합니다..."
+sudo sed -i 's/Listen 80/Listen 8080/g' /etc/httpd/conf/httpd.conf
+
+# --- SELinux에 8080 포트 허용 정책 추가 ---
+echo "🛡️ SELinux가 httpd의 8080 포트 사용을 허용하도록 정책을 추가합니다..."
+# http_port_t 타입에 8080/tcp 포트를 추가합니다. 이미 존재하면 무시합니다.
+if ! sudo semanage port -l | grep -q "^http_port_t.*tcp.*8080"; then
+    sudo semanage port -a -t http_port_t -p tcp 8080
+fi
+
 sudo systemctl enable --now libvirtd
 sudo systemctl enable --now httpd
 
