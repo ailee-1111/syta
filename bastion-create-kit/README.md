@@ -67,4 +67,4 @@ chmod +x 3_register_service.sh
 설치 확인
 모든 과정이 끝나면 웹 브라우저를 열고 아래 주소로 접속하여 웹 UI가 정상적으로 나타나는지 확인합니다.
 
-http://<RHEL9_호스트_IP>:5000
+http://<RHEL9_호스트_IP>:5011
