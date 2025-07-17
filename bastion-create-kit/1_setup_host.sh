@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "🚀 RHEL 9 호스트 서버 초기 설정을 시작합니다 (Flask 버전)..."
+echo "========================================================"
+echo "🚀 1. RHEL 9 호스트 서버 초기 설정을 시작합니다..."
+echo "========================================================"
 
 # 1. 필수 패키지 설치
 echo "📦 필수 패키지를 설치합니다: KVM, Web Server, Python, Flask..."
@@ -35,11 +37,10 @@ sudo mkdir -p /var/www/html/rhel9.6
 # 6. SELinux 컨텍스트 설정 (매우 중요)
 echo "🛡️ SELinux 컨텍스트를 설정하여 파일 접근을 허용합니다..."
 # ISO 마운트 경로
-sudo semanage fcontext -a -t httpd_sys_content_t "/var/www/html/rhel9.6(/.*)?"
+sudo semanage fcontext -a -t httpd_sys_content_t "/var/www/html/rhel9.6(/.*)?" || true
 sudo restorecon -Rv /var/www/html/rhel9.6
 # Kickstart 파일 생성/읽기 경로
-sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/kickstart(/.*)?"
+sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/www/html/kickstart(/.*)?" || true
 sudo restorecon -Rv /var/www/html/kickstart
 
-echo "✅ 모든 설정이 완료되었습니다."
-echo "이제 /var/www/html/bastion/ 디렉토리에 app.py와 templates/index.html 파일을 생성하세요."
+echo "✅ 호스트 설정이 완료되었습니다. 다음으로 '2_deploy_app.sh'를 실행하세요."
