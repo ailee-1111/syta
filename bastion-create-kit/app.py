@@ -83,7 +83,7 @@ def index():
             
             elif action == 'create_vm':
                 http_server_ip = request.form.get('http_server_ip')
-                ks_url = f"inst.ks=http://{http_server_ip}:8080/kickstart/ks.cfg"
+                ks_url = f"http://{http_server_ip}:8080/kickstart/ks.cfg"
                 location_url = f"http://{http_server_ip}:8080/rhel9.6"
 
                 virt_install_cmd = [
@@ -96,7 +96,7 @@ def index():
                     '--network', 'bridge=virbr0',
                     '--graphics', 'vnc,listen=0.0.0.0',
                     '--location', location_url,
-                    '--extra-args', ks_url,
+                    f'--extra-args=inst.ks={ks_url}',
                     '--noautoconsole'
                 ]
                 
