@@ -10,16 +10,16 @@ Bastion VM 생성 자동화 도구 (Flask 버전)
 
 🚀 전체 설치 과정
 사전 준비:
-이 저장소의 파일들을 RHEL 9 호스트의 특정 디렉토리(예: /home/user/bastion-creator-kit)에 준비합니다.
+이 저장소의 파일들을 RHEL 9 호스트의 특정 디렉토리(예: /home/user/bastion-create-kit)에 준비합니다.
 
 # 1. git이 설치되어 있지 않다면 먼저 설치합니다.
 sudo dnf install git -y
 
 # 2. git clone 명령어로 저장소의 모든 파일을 다운로드합니다.
-git clone https://github.com/ailee-1111/syta/bastion-create-kit
+git clone https://github.com/ailee-1111/syta/
 
 # 3. 다운로드된 디렉토리로 이동합니다.
-cd bastion-creator-kit
+cd syta/bastion-create-kit
 
 # 4. README.md 파일의 안내에 따라 스크립트를 실행합니다.
 ./1_setup_host.sh
