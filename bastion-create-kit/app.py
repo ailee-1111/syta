@@ -64,8 +64,8 @@ def index():
             if action == 'generate_kickstart':
                 ks_content = KS_TEMPLATE.replace("##ROOT_PASSWORD##", request.form.get('root_password')) \
                                         .replace("##HTTP_SERVER_IP##", request.form.get('http_server_ip')) \
-                                        .replace("##IP_ADDRESS##", request.form.get('ip_address')) \
-                                        .replace("##SUBNET##", request.form.get('subnet')) \
+                                        #.replace("##IP_ADDRESS##", request.form.get('ip_address')) \
+                                        #.replace("##SUBNET##", request.form.get('subnet')) \
                                         .replace("##HOSTNAME##", request.form.get('hostname'))
 
                 ks_path = "/var/www/html/kickstart/ks.cfg"
