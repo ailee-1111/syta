@@ -1,0 +1,15 @@
+                virt_install_cmd = [
+                    'sudo', 'virt-install',
+                    '--name', 'rhel96-bastion',
+                    '--ram', '16384',
+                    '--vcpus', '8',
+                    '--disk', 'path=/var/lib/libvirt/images/rhel96-bastion.qcow2,size=50',
+                    '--os-variant', 'rhel9.6',
+                    '--network', 'bridge=virbr0',
+                    '--graphics', 'vnc,listen=0.0.0.0',
+                    '--location', http://192.168.0.101:8080/rhel9.6,
+                    '--extra-args', http://192.168.0.101:8080/kickstart/ks.cfg,
+                    '--noautoconsole'
+
+
+sudo virt-install --name rhel96-bastion --ram 16384 --vcpus 8 --disk path=/var/lib/libvirt/images/rhel96-bastion.qcow2,size=50 --os-variant rhel9.6 --network bridge=virbr0 --graphics vnc,listen=0.0.0.0 --location http://192.168.0.101:8080/rhel9.6 --extra-args http://192.168.0.101:8080/kickstart/ks.cfg --noautoconsole      
