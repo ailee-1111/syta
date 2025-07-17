@@ -36,6 +36,11 @@ python3-pip
 ansible-core
 %end
 
+# Add user with specified password
+useradd user
+echo 'user:Redhat123!@#' | chpasswd
+
+
 %post --log=/root/ks-post.log
 pip3 install Flask Flask-WTF
 %end
