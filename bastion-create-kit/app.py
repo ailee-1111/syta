@@ -40,6 +40,10 @@ python3-pip
 ansible-core
 nmstate
 wget
+podman
+skopeo
+jq
+tar
 %end
 
 
