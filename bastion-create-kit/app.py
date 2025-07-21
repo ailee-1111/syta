@@ -39,6 +39,7 @@ python3
 python3-pip
 ansible-core
 nmstate
+wget
 %end
 
 
