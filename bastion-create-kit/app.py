@@ -38,6 +38,7 @@ httpd-tools
 python3
 python3-pip
 ansible-core
+nmstate
 %end
 
 
