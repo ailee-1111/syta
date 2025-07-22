@@ -44,6 +44,7 @@ podman
 skopeo
 jq
 tar
+policycoreutils-python-utils
 %end
 
 
