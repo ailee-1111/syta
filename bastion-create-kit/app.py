@@ -57,6 +57,22 @@ useradd user
 echo 'user:Redhat123!@#' | chpasswd
 
 
+
+# 네트워크 인터페이스 이름 확인 (예: ens3 또는 enp1s0 등)
+IFACE=$(nmcli device status | grep ethernet | awk '{print $1}' | head -n1)
+
+echo "설정할 인터페이스: $IFACE"
+
+# 기존 connection 이름 확인 (보통은 interface 이름과 동일함)
+CONNAME=$(nmcli -t -f NAME,DEVICE connection show | grep "$IFACE" | cut -d: -f1)
+
+echo "기존 연결 이름: $CONNAME"
+
+# 기존 설정 삭제 및 새 설정 생성
+nmcli connection modify "$CONNAME" ipv4.method manual ipv4.addresses 192.168.122.100/24 ipv4.gateway 192.168.122.1
+nmcli connection down "$CONNAME"
+nmcli connection up "$CONNAME"
+
 %end
 
 reboot
