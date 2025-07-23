@@ -44,6 +44,9 @@ podman
 skopeo
 jq
 tar
+gcc
+python3-devel
+rsync
 policycoreutils-python-utils
 %end
 
