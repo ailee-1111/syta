@@ -18,7 +18,7 @@ rootpw --plaintext ##ROOT_PASSWORD##
 url --url="http://##HTTP_SERVER_IP##:8080/rhel9.6/BaseOS"
 repo --name="AppStream" --baseurl="http://##HTTP_SERVER_IP##:8080/rhel9.6/AppStream"
 
-#network --bootproto=static --device=eth0 --ip=##IP_ADDRESS## --netmask=##SUBNET## --gateway=192.168.0.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=##HOSTNAME## --activate
+network --bootproto=static --device=enp1s0 --ip=192.168.122.100 --netmask=255.255.255.0 --gateway=192.168.0.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=##HOSTNAME## --activate
 services --enabled="chronyd,httpd,named"
 firewall --enabled --service=ssh,http,https
 bootloader --location=mbr --boot-drive=vda
@@ -73,9 +73,9 @@ CONNAME=$(nmcli -t -f NAME,DEVICE connection show | grep "$IFACE" | cut -d: -f1)
 echo "기존 연결 이름: $CONNAME"
 
 # 기존 설정 삭제 및 새 설정 생성
-nmcli connection modify "$CONNAME" ipv4.method manual ipv4.addresses 192.168.122.100/24 ipv4.gateway 192.168.122.1
-nmcli connection down "$CONNAME"
-nmcli connection up "$CONNAME"
+#nmcli connection modify "$CONNAME" ipv4.method manual ipv4.addresses 192.168.122.100/24 ipv4.gateway 192.168.122.1
+#nmcli connection down "$CONNAME"
+#nmcli connection up "$CONNAME"
 
 %end
 
