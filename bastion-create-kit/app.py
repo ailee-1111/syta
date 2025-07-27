@@ -22,35 +22,35 @@ repo --name="AppStream" --baseurl="http://##HTTP_SERVER_IP##:8080/rhel9.6/AppStr
 
 network --bootproto=static --device=enp1s0 --ip=192.168.122.100 --netmask=255.255.255.0 --gateway=192.168.0.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=##HOSTNAME## --activate
 
-# --- 핵심 파티션 설정 (수동 방식) ---
+# LVM --- 핵심 파티션 설정 (수동 방식) ---
 
 # 1. 디스크의 모든 파티션을 깨끗하게 지웁니다.
 clearpart --all --initlabel
-
 # 2. 부팅에 필요한 /boot 파티션을 1GB로 생성합니다.
 part /boot --fstype="xfs" --size=1024
-
 # 3. 나머지 모든 공간을 차지하는 LVM 물리 볼륨을 생성합니다.
 #    --size=1 --grow 옵션이 남은 공간 전체를 사용하라는 의미입니다.
 part pv.01 --size=1 --grow
-
 # 4. 'rootvg' 라는 이름으로 볼륨 그룹을 생성합니다.
 volgroup rootvg pv.01
-
 # 5. swap 공간을 4GB로 생성합니다. (필요에 따라 크기 조절)
 logvol swap --vgname=rootvg --name=lv_swap --size=4096
-
 # 6. 남은 모든 공간을 루트(/) 파티션으로 할당합니다.
 #    --size=1 --grow 옵션을 사용해 남은 공간 전체를 할당합니다.
 logvol / --vgname=rootvg --name=lv_root --fstype="xfs" --size=1 --grow
 
 
+# 일반 볼륨
+#clearpart --all --initlabel
+#part /boot --fstype="xfs" --size=1024
+#part swap --size=4096
+#part / --fstype="xfs" --grow --size=1
+
+
+
 services --enabled="chronyd,httpd,named"
 firewall --enabled --service=ssh,http,https
 bootloader --location=mbr --boot-drive=vda
-zerombr
-clearpart --all --initlabel
-autopart --type=lvm
 graphical
 
 %packages
