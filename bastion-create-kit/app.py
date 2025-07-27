@@ -14,6 +14,17 @@ keyboard --xlayouts='us'
 timezone Asia/Seoul --utc
 rootpw --plaintext ##ROOT_PASSWORD##
 
+# --- 핵심 파티션 설정 ---
+# 1. 디스크의 모든 파티션을 깨끗하게 지웁니다.
+clearpart --all --initlabel
+
+# 2. 자동으로 파티션을 설정합니다.
+#    - /boot 파티션과 swap 파티션은 자동으로 생성됩니다.
+#    - --nohome 옵션으로 /home 파티션을 만들지 않고,
+#      남은 모든 공간을 루트(/) 파티션에 할당합니다.
+autopart --nohome
+
+
 # BaseOS와 AppStream 리포지토리를 명시적으로 지정
 url --url="http://##HTTP_SERVER_IP##:8080/rhel9.6/BaseOS"
 repo --name="AppStream" --baseurl="http://##HTTP_SERVER_IP##:8080/rhel9.6/AppStream"
