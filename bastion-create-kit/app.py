@@ -15,15 +15,12 @@ timezone Asia/Seoul --utc
 rootpw --plaintext ##ROOT_PASSWORD##
 
 
-
 # BaseOS와 AppStream 리포지토리를 명시적으로 지정
 url --url="http://##HTTP_SERVER_IP##:8080/rhel9.6/BaseOS"
 repo --name="AppStream" --baseurl="http://##HTTP_SERVER_IP##:8080/rhel9.6/AppStream"
+network --bootproto=static --device=enp1s0 --ip=192.168.122.100 --netmask=255.255.255.0 --gateway=192.168.122.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=##HOSTNAME## --activate
 
-network --bootproto=static --device=enp1s0 --ip=192.168.122.100 --netmask=255.255.255.0 --gateway=192.168.0.1 --nameserver=8.8.8.8,8.8.4.4 --hostname=##HOSTNAME## --activate
-
-# LVM --- 핵심 파티션 설정 (수동 방식) ---
-
+# --- 핵심 파티션 설정 (수동 방식) ---
 # 1. 디스크의 모든 파티션을 깨끗하게 지웁니다.
 clearpart --all --initlabel
 # 2. 부팅에 필요한 /boot 파티션을 1GB로 생성합니다.
@@ -40,11 +37,16 @@ logvol swap --vgname=rootvg --name=lv_swap --size=4096
 logvol / --vgname=rootvg --name=lv_root --fstype="xfs" --size=1 --grow
 
 
-# 일반 볼륨
+# --- 핵심 파티션 설정 ---
+# 1. 디스크의 모든 파티션을 깨끗하게 지웁니다.
 #clearpart --all --initlabel
-#part /boot --fstype="xfs" --size=1024
-#part swap --size=4096
-#part / --fstype="xfs" --grow --size=1
+
+# 2. 자동으로 파티션을 설정합니다.
+#    - /boot 파티션과 swap 파티션은 자동으로 생성됩니다.
+#    - --nohome 옵션으로 /home 파티션을 만들지 않고,
+#      남은 모든 공간을 루트(/) 파티션에 할당합니다.
+#autopart --nohome
+
 
 
 
@@ -77,7 +79,6 @@ policycoreutils-python-utils
 %end
 
 
-
 %post --log=/root/ks-post.log
 pip3 install Flask Flask-WTF
 
@@ -88,24 +89,11 @@ echo 'user:Redhat123!@#' | chpasswd
 
 
 
-# 네트워크 인터페이스 이름 확인 (예: ens3 또는 enp1s0 등)
-IFACE=$(nmcli device status | grep ethernet | awk '{print $1}' | head -n1)
-
-echo "설정할 인터페이스: $IFACE"
-
-# 기존 connection 이름 확인 (보통은 interface 이름과 동일함)
-CONNAME=$(nmcli -t -f NAME,DEVICE connection show | grep "$IFACE" | cut -d: -f1)
-
-echo "기존 연결 이름: $CONNAME"
-
-# 기존 설정 삭제 및 새 설정 생성
-#nmcli connection modify "$CONNAME" ipv4.method manual ipv4.addresses 192.168.122.100/24 ipv4.gateway 192.168.122.1
-#nmcli connection down "$CONNAME"
-#nmcli connection up "$CONNAME"
 
 %end
 
 reboot
+
 """
 
 @app.route('/', methods=['GET', 'POST'])
@@ -114,9 +102,9 @@ def index():
         action = request.form.get('action')
         try:
             if action == 'generate_kickstart':
-                ks_content = (KS_TEMPLATE.replace("##ROOT_PASSWORD##", request.form.get('root_password'))
-                                         .replace("##HTTP_SERVER_IP##", request.form.get('http_server_ip'))
-                                         .replace("##HOSTNAME##", request.form.get('hostname')))
+                ks_content = KS_TEMPLATE.replace("##ROOT_PASSWORD##", request.form.get('root_password')) \
+                                        .replace("##HTTP_SERVER_IP##", request.form.get('http_server_ip')) \
+                                        .replace("##HOSTNAME##", request.form.get('hostname'))
 
                 ks_path = "/var/www/html/kickstart/ks.cfg"
                 with open(ks_path, "w") as f:
@@ -144,19 +132,34 @@ def index():
                 subprocess.run(['sudo', 'mount', '-o', 'loop', download_path, mount_path], check=True)
                 
                 flash(f"✅ ISO 이미지를 성공적으로 다운로드하고 {mount_path} 에 마운트했습니다.", 'success')
-            
+
+                # [수정] 마운트된 디렉터리에 올바른 SELinux 컨텍스트를 재귀적으로 적용
+                subprocess.run(['sudo', 'restorecon', '-Rv', mount_path], check=True)
+
+                flash(f"✅ ISO 이미지를 성공적으로 마운트하고 SELinux 컨텍스트를 설정했습니다 ({mount_path}).", 'success')
+
+
+
             elif action == 'create_vm':
                 http_server_ip = request.form.get('http_server_ip')
+                # vCPUs, RAM, Disk Size 값 읽어오기
+                vcpus = request.form.get('vm_vcpus', '8')
+                ram_gb = int(request.form.get('vm_ram', '16'))
+                disk_size = request.form.get('disk_size', '500')
+
+                # RAM을 GB에서 MB로 변환
+                ram_mb = ram_gb * 1024
                 
                 location_url = f"http://{http_server_ip}:8080/rhel9.6"
                 ks_location = f"http://{http_server_ip}:8080/kickstart/ks.cfg"
 
+                # virt-install 명령어에 동적 값 적용
                 virt_install_cmd = [
                     'sudo', 'virt-install',
-                    '--name', 'rhel96-bastion',
-                    '--ram', '16384',
-                    '--vcpus', '8',
-                    '--disk', 'path=/rhel96-bastion.qcow2,size=50',
+                    '--name', 'rhel9-6-bastion4',
+                    '--ram', str(ram_mb),
+                    '--vcpus', vcpus,
+                    '--disk', f'path=/disk1/rhel9-6-bastion4.qcow2,size={disk_size}',
                     '--os-variant', 'rhel9.4',
                     '--network', 'bridge=virbr0',
                     '--graphics', 'vnc,listen=0.0.0.0',
@@ -164,7 +167,12 @@ def index():
                     f'--extra-args=inst.ks={ks_location}',
                     '--noautoconsole'
                 ]
-                
+
+
+
+
+
+
                 result = subprocess.run(virt_install_cmd, capture_output=True, text=True, check=True)
                 flash("🚀 VM 생성 명령을 실행했습니다. `virt-manager` 또는 `virsh list`로 상태를 확인하세요.", 'success')
 
