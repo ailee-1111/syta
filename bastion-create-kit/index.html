@@ -14,7 +14,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">🚀 1단계 : RHEL 9.6 Bastion VM 생성기</a>
+            <a class="navbar-brand" href="#">🚀 1단계: RHEL 9.6 Bastion VM 생성</a>
         </div>
     </nav>
 
@@ -64,20 +64,12 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label for="root_password" class="form-label">Root 비밀번호</label>
-                        <input type="password" class="form-control" id="root_password" name="root_password" placeholder="#은 주석으로 인식하므로 사용금지" required>
+                        <input type="password" class="form-control" id="root_password" name="root_password" placeholder="#는 주석으로 처리되므로 사용금지" required>
                     </div>
                     <div class="mb-3">
                         <label for="hostname" class="form-label">VM 호스트명</label>
                         <input type="text" class="form-control" id="hostname" name="hostname" placeholder="bastion.example.com" required>
                     </div>
-                    #<div class="mb-3">
-                        #<label for="ip_address" class="form-label">VM IP 주소</label>
-                        #<input type="text" class="form-control" id="ip_address" name="ip_address" placeholder="192.168.0.177" required>
-                    #</div>
-                    #<div class="mb-3">
-                        #<label for="subnet" class="form-label">서브넷 마스크</label>
-                        #<input type="text" class="form-control" id="subnet" name="subnet" placeholder="255.255.255.0" required>
-                    #</div>
                     <div class="mb-3">
                         <label for="http_server_ip_step2" class="form-label">호스트(HTTP) 서버 IP</label>
                         <input type="text" class="form-control" id="http_server_ip_step2" name="http_server_ip" placeholder="예: 192.168.0.201" required>
@@ -93,6 +85,25 @@
             <div class="card">
                 <div class="card-header">3단계: Bastion VM 생성</div>
                 <div class="card-body">
+                    <!--  [수정] vCPUs, RAM, Disk Size 드롭다운 추가 -->
+                    <div class="mb-3">
+                        <label for="vm_vcpus" class="form-label">vCPUs</label>
+                        <select class="form-select" id="vm_vcpus" name="vm_vcpus">
+                            <!-- JavaScript가 옵션을 채웁니다. -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="vm_ram" class="form-label">RAM (GB)</label>
+                        <select class="form-select" id="vm_ram" name="vm_ram">
+                            <!-- JavaScript가 옵션을 채웁니다. -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="disk_size" class="form-label">Disk Size</label>
+                        <select class="form-select" id="disk_size" name="disk_size">
+                            <!-- JavaScript가 옵션을 채웁니다. -->
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label for="http_server_ip_step3" class="form-label">호스트(HTTP) 서버 IP</label>
                         <input type="text" class="form-control" id="http_server_ip_step3" name="http_server_ip" placeholder="Kickstart 파일 생성 시 사용한 IP와 동일" required>
@@ -104,5 +115,34 @@
         </form>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!--  [수정] 드롭다운 옵션을 동적으로 생성하는 스크립트 추가 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const vcpuSelect = document.getElementById('vm_vcpus');
+            for (let i = 1; i <= 64; i++) {
+                const option = new Option(i, i);
+                if (i === 8) option.selected = true; // 기본값 8
+                vcpuSelect.add(option);
+            }
+
+            const ramSelect = document.getElementById('vm_ram');
+            for (let i = 2; i <= 64; i++) {
+                const option = new Option(`${i} GB`, i);
+                if (i === 16) option.selected = true; // 기본값 16
+                ramSelect.add(option);
+            }
+
+            const diskSelect = document.getElementById('disk_size');
+            for (let i = 100; i <= 2000; i += 100) {
+                let label = `${i} GB`;
+                if (i >= 1000) {
+                    label = `${i / 1000} TB`;
+                }
+                const option = new Option(label, i);
+                if (i === 500) option.selected = true; // 기본값 500
+                diskSelect.add(option);
+            }
+        });
+    </script>
 </body>
 </html>
